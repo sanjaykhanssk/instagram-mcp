@@ -1,0 +1,25 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "com.instantdm/instagram",
+  "description": "Manage Instagram via InstantDM: posts, comments, DM replies, inbox, insights, ad comments, and the linked Facebook Page.",
+  "repository": {
+    "url": "https://github.com/instantdm/instagram-mcp",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "websiteUrl": "https://instantdm.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://openapi.instantdm.com/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer <your InstantDM API key from app.instantdm.com/api-integration>",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

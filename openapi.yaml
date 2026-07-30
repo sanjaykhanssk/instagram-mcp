@@ -1,0 +1,282 @@
+openapi: "3.1.0"
+info:
+  title: InstantDM Open API
+  version: "1.1.0"
+  description: |
+    Third-party API for InstantDM (openapi.instantdm.com). Auth: your InstantDM
+    API key (generate at app.instantdm.com/api-integration) sent as
+    `Authorization: Bearer <key>` (a bare key or `x-api-key` also work).
+
+    Reads are free but plan-gated. Sends (`x-credits: 1`) bill one credit each.
+    A live insights report also bills one credit (it fans out to many Instagram
+    Graph calls).
+
+    The MCP endpoint `POST /mcp` speaks Model Context Protocol (JSON-RPC 2.0,
+    Streamable HTTP, stateless). Connect AI clients with
+    `https://openapi.instantdm.com/mcp?auth=<key>`.
+
+    `x-token` marks which stored credential a route needs:
+      ig_user  — Instagram Login token (default connection)
+      fb_page  — connected Facebook Page token
+      fb_user  — Facebook *user* token: only present when the account was
+                 connected via Facebook Login; required by all ads routes (403
+                 with `reconnect_required: true` otherwise).
+servers:
+  - url: https://openapi.instantdm.com
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      description: InstantDM API key
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code: { type: integer }
+            message: { type: string }
+            upgrade_required: { type: boolean }
+            reconnect_required: { type: boolean }
+            credits_remaining: { type: integer }
+    Envelope:
+      type: object
+      properties:
+        code: { type: integer }
+        message: { type: string }
+  responses:
+    Error:
+      description: Error (400 bad input, 401 key, 402 credits, 403 plan/connection, 404 not connected, 429 hourly limit)
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
+paths:
+  /say_my_name:
+    get:
+      operationId: sayMyName
+      summary: Auth probe — returns the connected IG username
+      x-credits: 0
+      x-token: ig_user
+      responses: { "200": { description: "{code, data:{ig_username}}" }, default: { $ref: "#/components/responses/Error" } }
+  /account_details:
+    get:
+      operationId: getAccountDetails
+      summary: Account, plan and credit status
+      x-credits: 0
+      responses: { "200": { description: "{code, data:{user_id, ig_username, ig_user_id, plan_id, credits_remaining, unlimited}}" }, default: { $ref: "#/components/responses/Error" } }
+  /ig_posts:
+    get:
+      operationId: listIgPosts
+      summary: Recent posts/reels of the connected IG account
+      x-credits: 0
+      x-token: ig_user
+      parameters:
+        - { name: after, in: query, schema: { type: string }, description: pagination cursor }
+      responses: { "200": { description: "{code, posts_lists:{data[], paging.cursors}}" }, default: { $ref: "#/components/responses/Error" } }
+  /ig_comments:
+    get:
+      operationId: listIgComments
+      summary: Comments on a post
+      x-credits: 0
+      x-token: ig_user
+      parameters:
+        - { name: post_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging}" }, default: { $ref: "#/components/responses/Error" } }
+  /send_message:
+    post:
+      operationId: sendMessage
+      summary: Send a DM or a private reply to a comment
+      description: "body: {recipient_id | comment_id + type: comment_reply, message}. message may be a string or a rich object (text+buttons≤3, cards≤10, quick_replies, media {type,url}, raw attachment). Aliases: /reply_in_dm, /reply_in_dm_raw."
+      x-credits: 1
+      x-token: ig_user
+      responses: { "200": { description: "{code, message_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
+  /post_comment:
+    post:
+      operationId: postComment
+      summary: Public reply to a comment
+      description: "body: {comment_id, comment_text | comments[]}. Alias: /respond_to_comment. Works for IG and (page-token) FB comment ids."
+      x-credits: 1
+      x-token: ig_user
+      responses: { "200": { description: "{code, comment_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
+  /create_or_update_contact:
+    post:
+      operationId: createOrUpdateContact
+      summary: Tag/update a CRM contact
+      x-credits: 0
+      responses: { "200": { description: "{code, contact_id}" }, default: { $ref: "#/components/responses/Error" } }
+  /disable_automation:
+    post:
+      operationId: disableAutomation
+      summary: Pause ALL automations for the account
+      x-credits: 0
+      responses: { "200": { description: "{code}" }, default: { $ref: "#/components/responses/Error" } }
+  /trigger_flow:
+    post:
+      operationId: triggerFlow
+      summary: Start an automation flow for a contact
+      x-credits: 1
+      responses: { "200": { description: "{code, flow_id}" }, default: { $ref: "#/components/responses/Error" } }
+  /action:
+    post:
+      operationId: invokeAction
+      summary: make.com-shaped dispatch — {action, payload}
+      x-credits: varies
+      responses: { "200": { description: per action }, default: { $ref: "#/components/responses/Error" } }
+
+  /account_insights:
+    get:
+      operationId: getAccountInsights
+      summary: Account-level Instagram insights (direct Graph reads)
+      description: "Raw Graph API data: window totals (reach, views, interactions, ...), daily follower_count series, follower demographics by country, and profile counters. Falls back to a core metric set when the account doesn't support the full one."
+      x-credits: 0
+      x-token: ig_user
+      parameters:
+        - { name: days, in: query, schema: { type: integer, minimum: 1, maximum: 30, default: 30 } }
+      responses: { "200": { description: "{code, data:{ig_id, days, profile, insights[], follower_count_daily[], follower_demographics[]}}" }, default: { $ref: "#/components/responses/Error" } }
+  /post_insights:
+    get:
+      operationId: getPostInsights
+      summary: Insights for one post/reel/story (direct Graph reads)
+      description: Metric set picked by media_product_type (reels add watch time, stories add navigation); falls back to a basic set when needed.
+      x-credits: 0
+      x-token: ig_user
+      parameters:
+        - { name: media_id, in: query, required: true, schema: { type: string } }
+      responses: { "200": { description: "{code, data:{post, media_product_type, insights[]}}" }, default: { $ref: "#/components/responses/Error" } }
+  # /insights_history: disabled for now (snapshot cron not live)
+  #   get:
+  #     operationId: getInsightsHistory
+  #     summary: Long-term followers/reach/views history from nightly snapshots
+  #     x-credits: 0
+  #     responses: { "200": { description: "{code, data:{followers[], reach[], views[], interactions[], since, points}}" } }
+
+  /ig_conversations:
+    get:
+      operationId: listConversations
+      summary: Recent DM conversations
+      x-credits: 0
+      x-token: ig_user (fb_page fallback)
+      parameters:
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
+  /ig_conversation_messages:
+    get:
+      operationId: listConversationMessages
+      summary: Messages in one conversation (full text only for ~20 most recent)
+      x-credits: 0
+      x-token: ig_user (fb_page fallback)
+      parameters:
+        - { name: conversation_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
+
+  /ad_accounts:
+    get:
+      operationId: listAdAccounts
+      summary: Meta ad accounts linked to the profile
+      x-credits: 0
+      x-token: fb_user
+      parameters:
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[{id, account_id, name, currency, account_status, business}], paging}" }, default: { $ref: "#/components/responses/Error" } }
+  /ad_campaigns:
+    get:
+      operationId: listAdCampaigns
+      summary: Campaigns in an ad account
+      x-credits: 0
+      x-token: fb_user
+      parameters:
+        - { name: ad_account_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging}" }, default: { $ref: "#/components/responses/Error" } }
+  /ad_sets:
+    get:
+      operationId: listAdSets
+      summary: Ad sets in a campaign
+      x-credits: 0
+      x-token: fb_user
+      parameters:
+        - { name: campaign_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging}" }, default: { $ref: "#/components/responses/Error" } }
+  /ads:
+    get:
+      operationId: listAds
+      summary: Ads in an ad account (or ad set), with the IG-media bridge
+      description: Each ad carries creative.effective_instagram_media_id + insights{spend,impressions,clicks,ctr,cpc,actions}. Filtered to the connected IG account unless all_ads=1 (response flags `filtered`).
+      x-credits: 0
+      x-token: fb_user
+      parameters:
+        - { name: ad_account_id, in: query, schema: { type: string } }
+        - { name: ad_set_id, in: query, schema: { type: string } }
+        - { name: all_ads, in: query, schema: { type: boolean } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging, filtered}" }, default: { $ref: "#/components/responses/Error" } }
+  /ad_comments:
+    get:
+      operationId: listAdComments
+      summary: Comments on an ad's Instagram media
+      description: Resolves the ad to creative.effective_instagram_media_id (fb_user token), reads comments with the IG token (FB-user-token fallback for dark posts). 404 "Ad has no Instagram media" for non-IG creatives.
+      x-credits: 0
+      x-token: fb_user + ig_user
+      parameters:
+        - { name: ad_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, media_id, permalink, data[], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
+  /reply_to_ad_comment:
+    post:
+      operationId: replyToAdComment
+      summary: Public reply to an ad comment (alias of /post_comment)
+      x-credits: 1
+      x-token: ig_user
+      responses: { "200": { description: "{code, comment_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
+  /ad_comment_private_reply:
+    post:
+      operationId: privateReplyToAdComment
+      summary: Private (DM) reply to an ad comment
+      description: "body: {comment_id, message}"
+      x-credits: 1
+      x-token: ig_user
+      responses: { "200": { description: "{code, message_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
+
+  /fb_page_posts:
+    get:
+      operationId: listFbPagePosts
+      summary: Recent posts of the connected Facebook Page
+      x-credits: 0
+      x-token: fb_page
+      parameters:
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[{id, message, full_picture, created_time, permalink_url}], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
+  /fb_page_comments:
+    get:
+      operationId: listFbPageComments
+      summary: Comments on a Facebook Page post
+      x-credits: 0
+      x-token: fb_page
+      parameters:
+        - { name: post_id, in: query, required: true, schema: { type: string } }
+        - { name: after, in: query, schema: { type: string } }
+      responses: { "200": { description: "{code, data[], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
+  /fb_page_comment_reply:
+    post:
+      operationId: replyToFbPageComment
+      summary: Public reply to a Page comment (page token)
+      description: "body: {comment_id, comment_text}"
+      x-credits: 1
+      x-token: fb_page
+      responses: { "200": { description: "{code, comment_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
+
+  /mcp:
+    post:
+      operationId: mcp
+      summary: Model Context Protocol endpoint (JSON-RPC 2.0, stateless Streamable HTTP)
+      description: "Connect AI clients (Claude, ChatGPT, Codex, OpenClaw, Hermes Agent, ...) as https://openapi.instantdm.com/mcp?auth=<key>. Implements initialize, tools/list, tools/call, ping. 19 tools mapping to the routes above."
+      security: []
+      responses: { "200": { description: JSON-RPC response }, "202": { description: notification accepted } }
