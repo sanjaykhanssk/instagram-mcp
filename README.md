@@ -58,7 +58,7 @@ url = "https://openapi.instantdm.com/mcp?auth=<your-api-key>"
 **Claude Code plugin** (MCP connection + the `instagram-manager` skill with ready-made triage, reporting, and ad-monitoring workflows):
 
 ```
-/plugin marketplace add instantdm/instagram-mcp
+/plugin marketplace add sanjaykhanssk/instagram-mcp
 /plugin install instantdm-instagram
 ```
 
@@ -128,7 +128,7 @@ Instagram Login alone covers posts, comments, DMs, and insights. The **ads tools
 | 403 `reconnect_required` | Ads tools need Facebook Login connection |
 | 429 | Hourly send limit reached — wait for the top of the hour |
 
-Facing an issue, or need an endpoint we don't have yet? [Open an issue](https://github.com/instantdm/instagram-mcp/issues) — we ship fast.
+Facing an issue, or need an endpoint we don't have yet? [Open an issue](https://github.com/sanjaykhanssk/instagram-mcp/issues) — we ship fast.
 
 ## REST API
 

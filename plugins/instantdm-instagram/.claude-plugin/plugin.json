@@ -1,0 +1,11 @@
+{
+  "name": "instantdm-instagram",
+  "version": "1.0.0",
+  "description": "Manage Instagram from Claude via InstantDM — comments, DMs, insights, ads, Facebook Page.",
+  "author": {
+    "name": "InstantDM",
+    "url": "https://instantdm.com"
+  },
+  "homepage": "https://github.com/sanjaykhanssk/instagram-mcp",
+  "keywords": ["instagram", "social-media", "dm", "comments", "insights", "instantdm"]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "instantdm",
+  "owner": {
+    "name": "InstantDM",
+    "url": "https://instantdm.com"
+  },
+  "plugins": [
+    {
+      "name": "instantdm-instagram",
+      "source": "./plugins/instantdm-instagram",
+      "description": "Manage Instagram from Claude via InstantDM: comments, DMs, insights, ad comments, Facebook Page — plus the instagram-manager skill with ready-made workflows.",
+      "author": {
+        "name": "InstantDM",
+        "url": "https://instantdm.com"
+      }
+    }
+  ]
+}

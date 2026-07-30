@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "instantdm": {
+      "type": "http",
+      "url": "https://openapi.instantdm.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${INSTANTDM_API_KEY}"
+      }
+    }
+  }
+}

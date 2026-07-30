@@ -1,0 +1,377 @@
+{
+  "name": "Instagram MCP - IG AutoDM",
+  "version": "1.0.0",
+  "description": "Manage Instagram via InstantDM (Meta Business Partner): reply to comments publicly or by DM, send DMs, read your inbox, pull account/post insights, and monitor & answer comments on your Meta ads. Hosted server - connect with your InstantDM API key, nothing to install.",
+  "author": "InstantDM",
+  "authorUrl": "https://instantdm.com",
+  "icon": "https://app.instantdm.com/favicon.ico",
+  "category": "media-generate",
+  "cloudEndpoint": "https://openapi.instantdm.com/mcp",
+  "homepage": "https://github.com/sanjaykhanssk/instagram-mcp",
+  "tags": [
+    "instagram",
+    "instagram-dm",
+    "instagram-automation",
+    "social-media",
+    "comments",
+    "insights",
+    "meta-ads",
+    "manychat-alternative",
+    "instantdm"
+  ],
+  "tools": [
+    {
+      "name": "whoami",
+      "description": "Verify the InstantDM connection and get the linked Instagram account, plan, and remaining message credits. Call this first in a session. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_posts",
+      "description": "List the account's recent Instagram posts and reels with ids, captions, timestamps, permalinks, like and comment counts. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_comments",
+      "description": "List comments on one Instagram post, with commenter username and comment id (use the id with reply_to_comment). Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "description": "Instagram media id from list_posts"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        },
+        "required": [
+          "post_id"
+        ]
+      }
+    },
+    {
+      "name": "reply_to_comment",
+      "description": "Reply to an Instagram comment, either publicly under the post or as a private DM to the commenter. Sends a real message and costs 1 credit — confirm the exact text with the user first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "string",
+            "description": "Comment id from list_comments"
+          },
+          "text": {
+            "type": "string",
+            "description": "Reply text"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private_dm"
+            ],
+            "description": "public = visible reply under the post; private_dm = DM only the commenter sees"
+          }
+        },
+        "required": [
+          "comment_id",
+          "text",
+          "visibility"
+        ]
+      }
+    },
+    {
+      "name": "send_dm",
+      "description": "Send an Instagram direct message to a user (use the sender id from a conversation or comment). Sends a real message and costs 1 credit — confirm the exact text with the user first. Instagram only allows messaging users who have interacted with the account.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "recipient_id": {
+            "type": "string",
+            "description": "Instagram-scoped user id of the recipient"
+          },
+          "text": {
+            "type": "string",
+            "description": "Message text"
+          }
+        },
+        "required": [
+          "recipient_id",
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "list_conversations",
+      "description": "List recent Instagram DM conversations with participants, snippet of the last message, and unread count. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_conversation",
+      "description": "Get the messages of one DM conversation (newest first; Instagram returns full text only for the ~20 most recent). Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "conversation_id": {
+            "type": "string",
+            "description": "Conversation id from list_conversations"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        },
+        "required": [
+          "conversation_id"
+        ]
+      }
+    },
+    {
+      "name": "get_account_insights",
+      "description": "Account-level Instagram insights straight from the Graph API: window totals (reach, views, interactions, profile views), daily follower counts, audience demographics by country, and profile counters. Needs the account's insights permission. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 30,
+            "description": "Window length in days, default 30 (Instagram's max per request)"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_post_insights",
+      "description": "Insights for one post, reel, or story straight from the Graph API: reach, likes, comments, saves, shares, views (reels add watch time; stories add navigation). Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "media_id": {
+            "type": "string",
+            "description": "Instagram media id from list_posts"
+          }
+        },
+        "required": [
+          "media_id"
+        ]
+      }
+    },
+    {
+      "name": "list_ad_accounts",
+      "description": "List the Meta ad accounts linked to this profile. Requires the account to be connected via Facebook Login. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_ads",
+      "description": "List ads in an ad account, each with spend/impressions/clicks and the linked Instagram media id (creative.effective_instagram_media_id) used for comment tools. Filtered to ads for the connected Instagram account unless all_ads is true. Requires Facebook Login. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ad_account_id": {
+            "type": "string",
+            "description": "Ad account id from list_ad_accounts (act_ prefix optional)"
+          },
+          "all_ads": {
+            "type": "boolean",
+            "description": "Include ads not linked to the connected Instagram account"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        },
+        "required": [
+          "ad_account_id"
+        ]
+      }
+    },
+    {
+      "name": "list_ad_comments",
+      "description": "List comments left on an ad's Instagram media (including boosted posts and dark posts). Requires Facebook Login. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "ad_id": {
+            "type": "string",
+            "description": "Ad id from list_ads"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        },
+        "required": [
+          "ad_id"
+        ]
+      }
+    },
+    {
+      "name": "reply_to_ad_comment",
+      "description": "Reply to a comment on an ad, publicly or as a private DM to the commenter. Sends a real message and costs 1 credit — confirm the exact text with the user first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "string",
+            "description": "Comment id from list_ad_comments"
+          },
+          "text": {
+            "type": "string",
+            "description": "Reply text"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private_dm"
+            ],
+            "description": "public = visible reply; private_dm = DM only the commenter sees"
+          }
+        },
+        "required": [
+          "comment_id",
+          "text",
+          "visibility"
+        ]
+      }
+    },
+    {
+      "name": "list_fb_page_posts",
+      "description": "List recent posts from the linked Facebook Page. Requires a connected Facebook Page. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_fb_page_comments",
+      "description": "List comments on a Facebook Page post. Requires a connected Facebook Page. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "post_id": {
+            "type": "string",
+            "description": "Page post id from list_fb_page_posts"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the previous result's paging.cursors.after to get the next page."
+          }
+        },
+        "required": [
+          "post_id"
+        ]
+      }
+    },
+    {
+      "name": "reply_to_fb_comment",
+      "description": "Reply publicly to a Facebook Page comment. Sends a real reply and costs 1 credit — confirm the exact text with the user first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "comment_id": {
+            "type": "string",
+            "description": "Comment id from list_fb_page_comments"
+          },
+          "text": {
+            "type": "string",
+            "description": "Reply text"
+          }
+        },
+        "required": [
+          "comment_id",
+          "text"
+        ]
+      }
+    },
+    {
+      "name": "trigger_flow",
+      "description": "Start a pre-built InstantDM automation flow for a contact (e.g. a welcome or link-delivery sequence). May send multiple messages, each costing credits — confirm with the user first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "flow_id": {
+            "type": "string",
+            "description": "The InstantDM flow id"
+          },
+          "recipient_id": {
+            "type": "string",
+            "description": "Instagram-scoped user id of the contact"
+          }
+        },
+        "required": [
+          "flow_id",
+          "recipient_id"
+        ]
+      }
+    },
+    {
+      "name": "create_or_update_contact",
+      "description": "Tag or update an InstantDM CRM contact for an Instagram user (tags, notes, custom fields). Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "description": "Instagram-scoped user id of the contact"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tags to apply"
+          },
+          "contact_info": {
+            "type": "object",
+            "description": "Fields to set on the contact"
+          }
+        },
+        "required": [
+          "contact_id"
+        ]
+      }
+    },
+    {
+      "name": "disable_automation",
+      "description": "Pause ALL InstantDM automations for this account (account-wide, not per contact) so a human can take over. Reversible in the InstantDM app. Free — use only when the user explicitly asks.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ]
+}

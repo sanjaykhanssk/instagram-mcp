@@ -3,7 +3,7 @@
   "name": "com.instantdm/instagram",
   "description": "Manage Instagram via InstantDM: posts, comments, DM replies, inbox, insights, ad comments, and the linked Facebook Page.",
   "repository": {
-    "url": "https://github.com/instantdm/instagram-mcp",
+    "url": "https://github.com/sanjaykhanssk/instagram-mcp",
     "source": "github"
   },
   "version": "1.0.0",
