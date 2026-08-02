@@ -18,6 +18,7 @@ Get your API key at **[app.instantdm.com/api-integration](https://app.instantdm.
 
 - **Instagram comment automation** — list comments on any post, classify them, and reply publicly or with a private DM to the commenter
 - **Instagram DM automation** — read conversations, draft replies in your voice, send after you approve
+- **Instagram content publishing** — upload and publish images, reels, stories, and carousels straight from the agent (public media URLs in, live post out)
 - **Instagram insights & analytics** — account reach, views, interactions, daily follower counts, audience demographics, and per-post metrics (reels watch time included)
 - **Meta ads comment management** — list your ad accounts and ads, read the comments people leave on your ads, and answer them before they burn your ad spend
 - **Facebook Page management** — Page feed, Page comments, and replies with the same tools
@@ -64,12 +65,14 @@ url = "https://openapi.instantdm.com/mcp?auth=<your-api-key>"
 
 Then set `INSTANTDM_API_KEY` in your environment.
 
-## Tools (19)
+## Tools (21)
 
 | Tool | What it does | Cost |
 |---|---|---|
 | `whoami` | Account, plan, remaining credits — call first | free |
 | `list_posts` | Recent posts & reels | free |
+| `create_post` | Upload & publish an image, reel, story, or carousel now | 1 credit |
+| `publish_post` | Finish publishing a video container still processing | (billed on publish) |
 | `list_comments` | Comments on a post | free |
 | `reply_to_comment` | Reply publicly or as a private DM (`visibility`) | 1 credit |
 | `send_dm` | DM a user | 1 credit |

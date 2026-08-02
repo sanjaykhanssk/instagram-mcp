@@ -273,10 +273,27 @@ paths:
       x-token: fb_page
       responses: { "200": { description: "{code, comment_id, credits_remaining}" }, default: { $ref: "#/components/responses/Error" } }
 
+  /create_post:
+    post:
+      operationId: createPost
+      summary: Upload & publish a post/reel/story/carousel now (direct Graph upload)
+      description: "body: {post_type?: image|reel|carousel|story, media:[{url,type,alt}] (or image_url/video_url), caption?, cover_url?}. Media must be public URLs (images JPEG, videos MP4/MOV). Flow: create container(s) -> poll status -> publish. If video processing outlives the request, returns {status: processing, container_id} — finish with /publish_post (nothing billed yet)."
+      x-credits: 1 (on successful publish)
+      x-token: ig_user
+      responses: { "200": { description: "{code, status: published|processing, media_id?, container_id?, credits_remaining?}" }, default: { $ref: "#/components/responses/Error" } }
+  /publish_post:
+    post:
+      operationId: publishPost
+      summary: Publish a previously created media container
+      description: "body: {container_id}. Returns processing status until Instagram finishes; publishes when FINISHED."
+      x-credits: 1 (on successful publish)
+      x-token: ig_user
+      responses: { "200": { description: "{code, status, media_id?, credits_remaining?}" }, default: { $ref: "#/components/responses/Error" } }
+
   /mcp:
     post:
       operationId: mcp
       summary: Model Context Protocol endpoint (JSON-RPC 2.0, stateless Streamable HTTP)
-      description: "Connect AI clients (Claude, ChatGPT, Codex, OpenClaw, Hermes Agent, ...) as https://openapi.instantdm.com/mcp?auth=<key>. Implements initialize, tools/list, tools/call, ping. 19 tools mapping to the routes above."
+      description: "Connect AI clients (Claude, ChatGPT, Codex, OpenClaw, Hermes Agent, ...) as https://openapi.instantdm.com/mcp?auth=<key>. Implements initialize, tools/list, tools/call, ping. 21 tools mapping to the routes above."
       security: []
       responses: { "200": { description: JSON-RPC response }, "202": { description: notification accepted } }

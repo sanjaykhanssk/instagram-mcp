@@ -1,7 +1,7 @@
 {
   "name": "Instagram MCP - IG AutoDM",
-  "version": "1.0.0",
-  "description": "Manage Instagram via InstantDM (Meta Business Partner): reply to comments publicly or by DM, send DMs, read your inbox, pull account/post insights, and monitor & answer comments on your Meta ads. Hosted server - connect with your InstantDM API key, nothing to install.",
+  "version": "1.1.0",
+  "description": "Manage Instagram via InstantDM (Meta Business Partner): publish posts/reels/stories/carousels, reply to comments publicly or by DM, send DMs, read your inbox, pull account/post insights, and monitor & answer comments on your Meta ads. Hosted server - connect with your InstantDM API key, nothing to install.",
   "author": "InstantDM",
   "authorUrl": "https://instantdm.com",
   "icon": "https://app.instantdm.com/favicon.ico",
@@ -362,6 +362,76 @@
         },
         "required": [
           "contact_id"
+        ]
+      }
+    },
+    {
+      "name": "create_post",
+      "description": "Upload and publish a post, reel, story, or carousel to the connected Instagram account RIGHT NOW. Media must be publicly reachable URLs (images JPEG, videos MP4/MOV). Publishes to the real account and costs 1 credit — show the user the media URL(s) and caption and get confirmation first. If a video is still processing when the request ends, returns a container_id to finish with publish_post.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "post_type": {
+            "type": "string",
+            "enum": [
+              "image",
+              "reel",
+              "carousel",
+              "story"
+            ],
+            "description": "Defaults to image (or reel when the media is a video)"
+          },
+          "media": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "description": "Public media URL"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "image or video"
+                },
+                "alt": {
+                  "type": "string",
+                  "description": "Alt text (images)"
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            "description": "1 item for image/reel/story; 2-10 for a carousel"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Post caption (hashtags allowed; not shown on stories)"
+          },
+          "cover_url": {
+            "type": "string",
+            "description": "Optional reel cover image URL"
+          }
+        },
+        "required": [
+          "media"
+        ]
+      }
+    },
+    {
+      "name": "publish_post",
+      "description": "Publish a media container from an earlier create_post that was still processing (reels/videos). Costs 1 credit when it publishes. Returns status 'processing' if Instagram isn't done yet — wait and retry.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "container_id": {
+            "type": "string",
+            "description": "container_id returned by create_post"
+          }
+        },
+        "required": [
+          "container_id"
         ]
       }
     },
