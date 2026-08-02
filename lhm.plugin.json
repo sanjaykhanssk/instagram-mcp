@@ -146,6 +146,22 @@
       }
     },
     {
+      "name": "get_contact_profile",
+      "description": "Look up an Instagram user who has interacted with the account (commenter or DM sender) by their Instagram-scoped id: username, full name, profile picture, follower count, and whether they follow the account / the account follows them. Great for qualifying leads before replying. Free.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contact_id": {
+            "type": "string",
+            "description": "Instagram-scoped user id (from.id on a comment, or the conversation participant id)"
+          }
+        },
+        "required": [
+          "contact_id"
+        ]
+      }
+    },
+    {
       "name": "get_account_insights",
       "description": "Account-level Instagram insights straight from the Graph API: window totals (reach, views, interactions, profile views), daily follower counts, audience demographics by country, and profile counters. Needs the account's insights permission. Free.",
       "inputSchema": {

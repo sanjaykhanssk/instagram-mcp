@@ -176,6 +176,17 @@ paths:
         - { name: after, in: query, schema: { type: string } }
       responses: { "200": { description: "{code, data[], paging.cursors}" }, default: { $ref: "#/components/responses/Error" } }
 
+  /contact_profile:
+    get:
+      operationId: getContactProfile
+      summary: Profile of a user who interacted with the account (commenter/DM sender)
+      description: "username, name, profile_pic, follower_count, is_following (they follow you), is_business_following. IG user token only; works for Instagram-scoped ids from comments/conversations."
+      x-credits: 0
+      x-token: ig_user
+      parameters:
+        - { name: contact_id, in: query, required: true, schema: { type: string } }
+      responses: { "200": { description: "{code, data:{contact_id, username, name, profile_pic, follower_count, is_following, is_business_following}}" }, default: { $ref: "#/components/responses/Error" } }
+
   /ad_accounts:
     get:
       operationId: listAdAccounts
@@ -294,6 +305,6 @@ paths:
     post:
       operationId: mcp
       summary: Model Context Protocol endpoint (JSON-RPC 2.0, stateless Streamable HTTP)
-      description: "Connect AI clients (Claude, ChatGPT, Codex, OpenClaw, Hermes Agent, ...) as https://openapi.instantdm.com/mcp?auth=<key>. Implements initialize, tools/list, tools/call, ping. 21 tools mapping to the routes above."
+      description: "Connect AI clients (Claude, ChatGPT, Codex, OpenClaw, Hermes Agent, ...) as https://openapi.instantdm.com/mcp?auth=<key>. Implements initialize, tools/list, tools/call, ping. 22 tools mapping to the routes above."
       security: []
       responses: { "200": { description: JSON-RPC response }, "202": { description: notification accepted } }

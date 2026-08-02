@@ -65,7 +65,7 @@ url = "https://openapi.instantdm.com/mcp?auth=<your-api-key>"
 
 Then set `INSTANTDM_API_KEY` in your environment.
 
-## Tools (21)
+## Tools (22)
 
 | Tool | What it does | Cost |
 |---|---|---|
@@ -77,6 +77,7 @@ Then set `INSTANTDM_API_KEY` in your environment.
 | `reply_to_comment` | Reply publicly or as a private DM (`visibility`) | 1 credit |
 | `send_dm` | DM a user | 1 credit |
 | `list_conversations` / `get_conversation` | Inbox and message history | free |
+| `get_contact_profile` | Commenter/DM-sender profile: username, followers, follows-you | free |
 | `get_account_insights` | Reach, views, interactions, follower series, demographics | free |
 | `get_post_insights` | Per-post metrics (reels: watch time; stories: navigation) | free |
 | `list_ad_accounts` / `list_ads` | Meta ad accounts and ads (with linked IG media) | free |
