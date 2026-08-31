@@ -8,7 +8,7 @@
     {
       "name": "instantdm-instagram",
       "source": "./plugins/instantdm-instagram",
-      "description": "Manage Instagram from Claude via InstantDM: comments, DMs, insights, ad comments, Facebook Page — plus the instagram-manager skill with ready-made workflows.",
+      "description": "Manage Instagram from Claude, ChatGPT, and Codex via InstantDM: comments, DMs, insights, ad comments, Facebook Page — plus the instagram-manager skill with ready-made workflows.",
       "author": {
         "name": "InstantDM",
         "url": "https://instantdm.com"

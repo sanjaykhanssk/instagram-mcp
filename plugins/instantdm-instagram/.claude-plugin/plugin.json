@@ -1,11 +1,23 @@
 {
   "name": "instantdm-instagram",
-  "version": "1.0.0",
-  "description": "Manage Instagram from Claude via InstantDM — comments, DMs, insights, ads, Facebook Page.",
+  "version": "1.1.0",
+  "description": "Manage Instagram from Claude, ChatGPT, and Codex via InstantDM — publish posts, comments, DMs, insights, ads, Facebook Page.",
   "author": {
     "name": "InstantDM",
+    "email": "hey@instantdm.com",
     "url": "https://instantdm.com"
   },
-  "homepage": "https://github.com/sanjaykhanssk/instagram-mcp",
-  "keywords": ["instagram", "social-media", "dm", "comments", "insights", "instantdm"]
+  "homepage": "https://instantdm.com/mcp",
+  "repository": "https://github.com/sanjaykhanssk/instagram-mcp",
+  "license": "MIT",
+  "keywords": [
+    "instagram",
+    "social-media",
+    "dm",
+    "comments",
+    "insights",
+    "instantdm"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
 }

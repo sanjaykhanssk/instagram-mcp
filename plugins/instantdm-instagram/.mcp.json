@@ -5,7 +5,8 @@
       "url": "https://openapi.instantdm.com/mcp",
       "headers": {
         "Authorization": "Bearer ${INSTANTDM_API_KEY}"
-      }
+      },
+      "bearer_token_env_var": "INSTANTDM_API_KEY"
     }
   }
 }

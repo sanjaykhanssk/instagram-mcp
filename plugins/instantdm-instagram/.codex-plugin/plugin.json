@@ -1,0 +1,50 @@
+{
+  "name": "instantdm-instagram",
+  "version": "1.1.0",
+  "description": "Manage Instagram from ChatGPT and Codex via InstantDM: publish posts, comments, DMs, insights, Meta ads, and the linked Facebook Page.",
+  "author": {
+    "name": "InstantDM",
+    "email": "hey@instantdm.com",
+    "url": "https://instantdm.com"
+  },
+  "homepage": "https://instantdm.com/mcp",
+  "repository": "https://github.com/sanjaykhanssk/instagram-mcp",
+  "license": "MIT",
+  "keywords": [
+    "instagram",
+    "instagram-dm",
+    "instagram-automation",
+    "social-media",
+    "comments",
+    "insights",
+    "meta-ads",
+    "instantdm"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "InstantDM",
+    "shortDescription": "Instagram DMs, comments, insights, and ads",
+    "longDescription": "InstantDM is a Meta Business Partner. This plugin lets ChatGPT and Codex manage an Instagram creator or business account through InstantDM's hosted MCP server: publish posts, reels, stories, and carousels; triage comments; reply publicly or by private DM; send DMs; pull account and post insights; and answer comments on Meta ads. Every send reaches a real person and costs 1 InstantDM credit — the bundled instagram-manager skill always shows the exact text and target for approval first.",
+    "developerName": "InstantDM",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://instantdm.com",
+    "privacyPolicyURL": "https://instantdm.com/privacy/",
+    "termsOfServiceURL": "https://instantdm.com/privacy/",
+    "defaultPrompt": [
+      "Check my InstantDM connection, then triage today's Instagram comments and draft replies for me to approve.",
+      "Summarize unread Instagram DMs and draft replies in my voice.",
+      "Give me a 7-day Instagram performance report with top posts and 3 recommendations."
+    ],
+    "brandColor": "#C026D3",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png",
+    "logoDark": "./assets/logo.png",
+    "screenshots": []
+  }
+}

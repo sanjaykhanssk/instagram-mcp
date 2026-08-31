@@ -1,0 +1,20 @@
+{
+  "name": "instantdm",
+  "interface": {
+    "displayName": "InstantDM"
+  },
+  "plugins": [
+    {
+      "name": "instantdm-instagram",
+      "source": {
+        "source": "local",
+        "path": "./plugins/instantdm-instagram"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

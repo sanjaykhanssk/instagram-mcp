@@ -34,9 +34,17 @@ Get your API key at **[app.instantdm.com/api-integration](https://app.instantdm.
 claude mcp add --transport http instantdm "https://openapi.instantdm.com/mcp?auth=<your-api-key>"
 ```
 
-**ChatGPT** — Settings → Apps & Connectors → Developer mode → add the URL above.
+**ChatGPT** — Settings → Apps & Connectors → Developer mode → add the URL above. Public directory listing: this repo is packaged as an OpenAI plugin (`.codex-plugin/plugin.json` + skills + MCP). Submit it at the [plugin submission portal](https://developers.openai.com/plugins/deploy/submission) as **With MCP**. ChatGPT's public directory expects [OAuth 2.1](https://developers.openai.com/plugins/build/auth) on the MCP server (API keys are fine in Developer mode and Codex).
 
-**Codex** — add to `~/.codex/config.toml`:
+**Codex plugin** (MCP + `instagram-manager` skill, listed from this repo's marketplace):
+
+```bash
+codex plugin marketplace add sanjaykhanssk/instagram-mcp
+```
+
+Then install **InstantDM** from the Plugins Directory and set `INSTANTDM_API_KEY`.
+
+**Codex (MCP URL only)** — add to `~/.codex/config.toml`:
 
 ```toml
 [mcp_servers.instantdm]
@@ -64,6 +72,8 @@ url = "https://openapi.instantdm.com/mcp?auth=<your-api-key>"
 ```
 
 Then set `INSTANTDM_API_KEY` in your environment.
+
+This same folder is an OpenAI plugin for ChatGPT and Codex — see [OPENAI_PLUGIN.md](./OPENAI_PLUGIN.md).
 
 ## Tools (22)
 
